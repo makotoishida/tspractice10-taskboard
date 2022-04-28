@@ -19,7 +19,7 @@ header {
   padding: 1rem;
   text-align: center;
   color: lightcyan;
-  background-color: darkcyan;
+  background-color: #fa3474;
 }
 
 header h1 {
@@ -32,7 +32,7 @@ footer {
   text-align: center;
   font-size: small;
   color: #fefefe;
-  background-color: darkgrey;
+  background-color: #fb96bb;
 }
 
 footer a {
@@ -51,3 +51,20 @@ footer a {
   background-color: #ffc;
 }
 
+.project-selector {
+  display: grid;
+  grid-template-columns:  repeat(auto-fit, minmax(10rem, 1fr));
+}
+
+.project-selector .project {
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+.project-selector  .project:hover {
+  background-color: yellow;
+}
+.project-selector .project.active {
+  color: blue;
+  background-color: #ffccccc0;
+}
