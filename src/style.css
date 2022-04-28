@@ -68,3 +68,51 @@ footer a {
   color: blue;
   background-color: #ffccccc0;
 }
+
+.project-title {
+  margin: 1.2rem 0 0.4rem;
+  color: #44f;
+  font-weight: bold;
+}
+
+.lanes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  row-gap: 0.2rem;
+  column-gap: 0.2rem;;
+  background-color: #ccc;
+}
+
+.lane {
+  background-color: #eee;
+}
+
+.lane-title {
+  margin: 0.2rem;
+  background-color: #fefefe;
+}
+
+.tasks {
+  display: grid;
+  padding: 0.4rem;
+  row-gap: 0.2rem;
+}
+
+.task {
+  padding: 0.2rem;
+  background-color: #fff;
+  border: 1px solid #bbb;
+  border-radius: 0.4rem;;
+  cursor: pointer;
+}
+.task-title {
+  margin: 0;
+  font-size: large;
+  font-weight: normal;
+}
+.task-description {
+  font-size: medium;
+}
+.task-due {
+  font-size: small;
+}

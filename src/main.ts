@@ -11,18 +11,24 @@ import {
 } from './taskboard'
 
 function Task(task: Task) {
-  return html`<div>${task.title} ${task.description} ${task.dueDate}</div>`
+  return html`<div class="task">
+    <h4 class="task-title">${task.title}</h4>
+    <div class="task-description">${task.description}</div>
+    <div class="task-due">${task.dueDate}</div>
+  </div>`
 }
 
 function Lane(lane: Lane) {
-  return html`<div>${lane.title} ${lane.tasks.map((i) => Task(i))}</div>`
+  return html`<div class="lane">
+    <h4 class="lane-title">${lane.title}</h4>
+    <div class="tasks">${lane.tasks.map((i) => Task(i))}</div>
+  </div>`
 }
 
 function Project(p: Project) {
-  return html`<div>
-    <h2>${p.title}</h2>
-    <hr />
-    ${p.lanes.map((i) => Lane(i))}
+  return html`<div class="project">
+    <h3 class="project-title">${p.title}</h3>
+    <div class="lanes">${p.lanes.map((i) => Lane(i))}</div>
   </div> `
 }
 
