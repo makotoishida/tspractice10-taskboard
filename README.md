@@ -1,5 +1,5 @@
-# tspractice10-clock
+# tspractice10-taskboard
 
 ## Live DEMO
 
-https://makotoishida.github.io/tspractice10-clock/
+https://makotoishida.github.io/tspractice10-taskboard/
