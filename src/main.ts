@@ -2,7 +2,8 @@ import { html, render } from 'lit-html'
 import 'normalize.css'
 import './style.css'
 import type { ProjectsStoreState, Project, Lane, Task } from './taskboard'
-import { sampleProjects, createStore } from './taskboard'
+import { createStore } from './taskboard'
+import exampleData from './exampleData'
 
 function Task(task: Task) {
   return html`<div class="task">
@@ -62,8 +63,8 @@ const appRoot = document.querySelector<HTMLDivElement>('#app')!
 
 const { setCurrentProject } = createStore(
   {
-    projects: sampleProjects,
-    currentProject: sampleProjects[0],
+    projects: exampleData,
+    currentProject: exampleData[0],
   },
   (state: ProjectsStoreState) => renderApp(state)
 )
