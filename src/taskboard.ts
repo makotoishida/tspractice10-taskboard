@@ -59,26 +59,30 @@ export function ProjectSelector({ projects, currentProject }: TaskboardState) {
   `
 }
 
-let drageOverElem: HTMLElement | null = null
+let dragStartElem: HTMLElement | null = null
+let dragOverElem: HTMLElement | null = null
 
 function onTaskDragStart(ev: DragEvent) {
   const id = (ev?.target as HTMLElement)?.dataset.id!
   if (ev.dataTransfer) {
     ev.dataTransfer.setData('text/plain', id)
     ev.dataTransfer.effectAllowed = 'move'
+    dragStartElem = ev?.target as HTMLElement
   }
 }
 
 function onTaskDragEnter(ev: DragEvent) {
   ev.preventDefault()
   const el = (ev.target as HTMLElement).closest<HTMLElement>('.task')!
-  drageOverElem = el
+  dragOverElem = el
 }
 
 function onTaskDragOver(ev: DragEvent) {
   ev.preventDefault()
 
   const el = (ev.target as HTMLElement).closest<HTMLElement>('.task')!
+  if (dragStartElem === el) return
+
   el.classList.remove('over-top', 'over-bottom')
   const rect = el.getBoundingClientRect()
   if (ev.clientY - rect.top < el.clientHeight / 2) {
@@ -96,7 +100,7 @@ function onTaskDragLeave(ev: DragEvent) {
 
 function onTaskDrop(ev: DragEvent) {
   ev.preventDefault()
-  drageOverElem = null
+  dragOverElem = null
 
   if (![...(ev?.dataTransfer?.types ?? [])].includes('text/plain')) return
 
@@ -105,8 +109,9 @@ function onTaskDrop(ev: DragEvent) {
   if (!taskId) return
 
   const el = (ev.target as HTMLElement).closest<HTMLElement>('.task')!
+  if (dragStartElem === el) return
+
   let beforeTaskId = el.dataset.id
-  console.log('onTaskDrop', taskId, beforeTaskId)
 
   el.classList.remove('over-top', 'over-bottom')
   if (taskId === beforeTaskId) return
@@ -131,7 +136,7 @@ function onLaneDragEnter(ev: DragEvent) {
   ev.preventDefault()
   const el = (ev.target as HTMLElement).closest('.tasks')!
   el.classList.add('over')
-  drageOverElem = ev.target as HTMLElement
+  dragOverElem = ev.target as HTMLElement
 }
 
 function onLaneDragOverLeave(ev: DragEvent, isOver: boolean) {
@@ -150,8 +155,8 @@ function onLaneDrop(ev: DragEvent) {
 
   const el = (ev.target as HTMLElement).closest('.tasks')!
   el.classList.remove('over')
-  if (drageOverElem !== el) return
-  drageOverElem = null
+  if (dragOverElem !== el) return
+  dragOverElem = null
 
   const taskId = ev?.dataTransfer?.getData('text/plain')
   // ev?.dataTransfer?.clearData()    // <-- Causes an error on FireFox.
