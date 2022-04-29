@@ -14,7 +14,7 @@ function Task(task: Task) {
 }
 
 function Lane(lane: Lane) {
-  return html`<div data-id="${lane.id}" class="lane" dropzone="true">
+  return html`<div data-id="${lane.id}" class="lane">
     <h4 class="lane-title">${lane.title}</h4>
     <div class="tasks">${lane.tasks.map((i) => Task(i))}</div>
   </div>`
@@ -75,9 +75,7 @@ function enableDrag() {
     '.task[draggable=true]'
   )
 
-  const dropzones = document.querySelectorAll<HTMLElement>(
-    '.lane[dropzone=true]'
-  )
+  const dropzones = document.querySelectorAll<HTMLElement>('.lane')
 
   let overElem: HTMLElement | null = null
 
@@ -115,6 +113,7 @@ function enableDrag() {
       ev.preventDefault()
       overElem = null
 
+      if (ev?.dataTransfer?.files?.length) return
       const taskId = ev?.dataTransfer?.getData('text/plain')
       if (!taskId) return
 
@@ -157,6 +156,7 @@ function enableDrag() {
 
     el.ondrop = (ev: DragEvent) => {
       ev.preventDefault()
+      if (ev?.dataTransfer?.files?.length) return
 
       el.classList.remove('over')
       if (overElem !== el) return
