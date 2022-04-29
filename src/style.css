@@ -95,7 +95,7 @@ footer a {
 .tasks {
   display: grid;
   padding: 0.4rem;
-  row-gap: 0.2rem;
+  row-gap: 0.4rem;
 }
 
 .task {

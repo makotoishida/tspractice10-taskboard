@@ -1,14 +1,8 @@
 import { html, render } from 'lit-html'
 import 'normalize.css'
 import './style.css'
-import {
-  sampleProjects,
-  createStore,
-  ProjectsStoreState,
-  Project,
-  Lane,
-  Task,
-} from './taskboard'
+import type { ProjectsStoreState, Project, Lane, Task } from './taskboard'
+import { sampleProjects, createStore } from './taskboard'
 
 function Task(task: Task) {
   return html`<div class="task">
