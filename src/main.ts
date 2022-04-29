@@ -115,6 +115,7 @@ function enableDrag() {
 
       if (ev?.dataTransfer?.files?.length) return
       const taskId = ev?.dataTransfer?.getData('text/plain')
+      ev?.dataTransfer?.clearData()
       if (!taskId) return
 
       let beforeTaskId = el.dataset.id
@@ -163,6 +164,7 @@ function enableDrag() {
       overElem = null
 
       const taskId = ev?.dataTransfer?.getData('text/plain')
+      ev?.dataTransfer?.clearData()
       if (!taskId) return
 
       const toLaneId = el.dataset.id!
