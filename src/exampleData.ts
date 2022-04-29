@@ -1,4 +1,4 @@
-import type { Project } from './taskboard'
+import type { Project } from './types'
 
 export default [
   {

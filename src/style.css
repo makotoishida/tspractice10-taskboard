@@ -84,17 +84,16 @@ footer a {
 .lanes {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-  row-gap: 0.2rem;
-  column-gap: 0.2rem;;
+  column-gap: 0.2rem;
   background-color: #ccc;
 }
 
 .lane {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 20rem;
+  padding: 0;
   background-color: #eee;
-}
-.lane.over {
-  background-color: #fb96bb;
-  border: 2px splid pink;
 }
 
 .lane-title {
@@ -104,11 +103,17 @@ footer a {
 
 .tasks {
   display: grid;
-  padding: 0.4rem;
+  align-content: flex-start;
   row-gap: 0.4rem;
+  padding: 0.4rem;
+}
+.tasks.over {
+  background-color: #ffc1d4d0;
+  border: 2px splid pink;
 }
 
 .task {
+  height: min-content;
   padding: 0.2rem;
   background-color: #fff;
   border: 1px solid #bbb;

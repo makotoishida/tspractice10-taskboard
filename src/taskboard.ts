@@ -1,81 +1,162 @@
-export type Task = {
-  id: string
-  title: string
-  description: string
-  dueDate?: Date
+import { html } from 'lit-html'
+import type { TaskboardState, Project, Lane, Task } from './types'
+import { setCurrentProject, moveTask } from './taskboardStore'
+import { formatDate } from './utils'
+
+function Task(task: Task) {
+  return html`<div
+    data-id="${task.id}"
+    class="task"
+    draggable="true"
+    @dragstart=${onTaskDragStart}
+    @dragenter=${onTaskDragEnter}
+    @dragover=${onTaskDragOver}
+    @dragleave=${onTaskDragLeave}
+    @drop=${onTaskDrop}
+  >
+    <h4 class="task-title">${task.title}</h4>
+    <div class="task-description">${task.description}</div>
+    <div class="task-due">${formatDate(task.dueDate)}</div>
+  </div>`
 }
 
-export type Lane = {
-  id: string
-  title: string
-  tasks: Task[]
+function Lane(lane: Lane) {
+  return html`<div data-id="${lane.id}" class="lane">
+    <h4 class="lane-title">${lane.title}</h4>
+    <div
+      class="tasks"
+      @dragenter=${onLaneDragEnter}
+      @dragover=${(ev: DragEvent) => onLaneDragOverLeave(ev, true)}
+      @dragleave=${(ev: DragEvent) => onLaneDragOverLeave(ev, false)}
+      @drop=${(ev: DragEvent) => onLaneDrop(ev)}
+    >
+      ${lane.tasks.map((i) => Task(i))}
+    </div>
+  </div>`
 }
 
-export type Project = {
-  id: string
-  title: string
-  lanes: Lane[]
+export function Project(state: TaskboardState) {
+  const p = state.currentProject
+  return html`<div data-id="${p.id}" class="project">
+    <h3 class="project-title">${p.title}</h3>
+    <div class="lanes">${p.lanes.map((i) => Lane(i))}</div>
+  </div> `
 }
 
-export type ProjectsStoreState = {
-  projects: Project[]
-  currentProject: Project
+export function ProjectSelector({ projects, currentProject }: TaskboardState) {
+  return html`
+    <div class="project-selector">
+      ${projects.map(
+        (i) =>
+          html`<div
+            class="project ${i === currentProject ? 'active' : ''}"
+            @click=${() => setCurrentProject(i)}
+          >
+            ${i.title}
+          </div>`
+      )}
+    </div>
+  `
 }
 
-export function createStore(
-  initialState: ProjectsStoreState,
-  onUpdate: (state: ProjectsStoreState) => void
-) {
-  let state: ProjectsStoreState = { ...initialState }
-  onUpdate(state)
+let drageOverElem: HTMLElement | null = null
 
-  function setCurrentProject(project: Project) {
-    if (project === state.currentProject) return
-    state = { ...state, currentProject: project }
-    onUpdate(state)
+function onTaskDragStart(ev: DragEvent) {
+  const id = (ev?.target as HTMLElement)?.dataset.id!
+  if (ev.dataTransfer) {
+    ev.dataTransfer.setData('text/plain', id)
+    ev.dataTransfer.effectAllowed = 'move'
   }
+}
 
-  function getTask(project: Project, taskId: string) {
-    let lane: Lane | undefined
-    let task: Task | undefined
-    project.lanes.forEach((i) => {
-      const t = i.tasks.find((j) => j.id === taskId)
-      if (t) {
-        lane = i
-        task = t
-      }
-    })
-    return { lane, task }
+function onTaskDragEnter(ev: DragEvent) {
+  ev.preventDefault()
+  const el = (ev.target as HTMLElement).closest<HTMLElement>('.task')!
+  drageOverElem = el
+}
+
+function onTaskDragOver(ev: DragEvent) {
+  ev.preventDefault()
+
+  const el = (ev.target as HTMLElement).closest<HTMLElement>('.task')!
+  el.classList.remove('over-top', 'over-bottom')
+  const rect = el.getBoundingClientRect()
+  if (ev.clientY - rect.top < el.clientHeight / 2) {
+    el.classList.add('over-top')
+  } else {
+    el.classList.add('over-bottom')
   }
+}
 
-  function moveTask(taskId: string, toLaneId: string, beforeTaskId?: string) {
-    console.log('moveTask: ', taskId, toLaneId, beforeTaskId)
-    state = { ...state }
-    const { currentProject } = state
-    const { lane, task } = getTask(currentProject, taskId)
-    console.log(currentProject, lane, task)
-    if (!lane || !task) return
-    const toLane = currentProject.lanes.find((i) => i.id === toLaneId)
-    if (!toLane) return
+function onTaskDragLeave(ev: DragEvent) {
+  ev.preventDefault()
+  const el = (ev.target as HTMLElement).closest<HTMLElement>('.task')!
+  el.classList.remove('over-top', 'over-bottom')
+}
 
-    let beforeTaskIndex: number = -1
-    if (beforeTaskId) {
-      beforeTaskIndex = toLane.tasks.findIndex((t) => t.id === beforeTaskId)
-    }
+function onTaskDrop(ev: DragEvent) {
+  ev.preventDefault()
+  drageOverElem = null
 
-    lane.tasks = lane.tasks.filter((t) => t !== task)
-    if (beforeTaskIndex >= 0) {
-      toLane.tasks.splice(beforeTaskIndex, 0, task)
-    } else {
-      toLane.tasks.push(task)
-    }
+  if (![...(ev?.dataTransfer?.types ?? [])].includes('text/plain')) return
 
-    onUpdate(state)
+  const taskId = ev?.dataTransfer?.getData('text/plain')
+  // ev?.dataTransfer?.clearData()    // <-- Causes an error on FireFox.
+  if (!taskId) return
+
+  const el = (ev.target as HTMLElement).closest<HTMLElement>('.task')!
+  let beforeTaskId = el.dataset.id
+  console.log('onTaskDrop', taskId, beforeTaskId)
+
+  el.classList.remove('over-top', 'over-bottom')
+  if (taskId === beforeTaskId) return
+
+  const rect = el.getBoundingClientRect()
+  const isBefore = ev.clientY - rect.top < el.clientHeight / 2
+  if (!isBefore) {
+    const siblings = Array.from(
+      el.parentElement?.querySelectorAll('.task') ?? []
+    ) as HTMLElement[]
+    const nextIndex = siblings.findIndex((i) => i === el)
+    const nextEl = nextIndex >= 0 ? siblings[nextIndex + 1] : undefined
+    beforeTaskId = nextEl?.dataset?.id
   }
+  if (taskId === beforeTaskId) return
 
-  return {
-    state,
-    setCurrentProject,
-    moveTask,
+  const toLaneId = el.closest<HTMLElement>('.lane')!.dataset.id!
+  moveTask(taskId, toLaneId, beforeTaskId)
+}
+
+function onLaneDragEnter(ev: DragEvent) {
+  ev.preventDefault()
+  const el = (ev.target as HTMLElement).closest('.tasks')!
+  el.classList.add('over')
+  drageOverElem = ev.target as HTMLElement
+}
+
+function onLaneDragOverLeave(ev: DragEvent, isOver: boolean) {
+  ev.preventDefault()
+  const el = (ev.target as HTMLElement).closest<HTMLElement>('.tasks')!
+  if (isOver) {
+    el.classList.add('over')
+  } else {
+    el.classList.remove('over')
   }
+}
+
+function onLaneDrop(ev: DragEvent) {
+  ev.preventDefault()
+  if (![...(ev?.dataTransfer?.types ?? [])].includes('text/plain')) return
+
+  const el = (ev.target as HTMLElement).closest('.tasks')!
+  el.classList.remove('over')
+  if (drageOverElem !== el) return
+  drageOverElem = null
+
+  const taskId = ev?.dataTransfer?.getData('text/plain')
+  // ev?.dataTransfer?.clearData()    // <-- Causes an error on FireFox.
+  if (!taskId) return
+
+  const toLaneId = el.closest<HTMLElement>('.lane')?.dataset?.id!
+  moveTask(taskId, toLaneId)
 }
