@@ -48,7 +48,7 @@ footer a {
   font-size: x-large;
   line-height: 160%;
   color: #2c3e50;
-  background-color: #ffc;
+  background-color: #ffffcc;
 }
 
 .project-selector {
@@ -60,13 +60,19 @@ footer a {
   border-radius: 0.4rem;
   cursor: pointer;
   transition: all 0.4s;
+  background-color: #e0e0c0c0;
+  border-bottom: 1px solid #aaa;
 }
 .project-selector  .project:hover {
   background-color: yellow;
 }
 .project-selector .project.active {
   color: blue;
-  background-color: #ffccccc0;
+  border-top: 1px solid #aaa;
+  border-left: 1px solid #aaa;
+  border-right: 1px solid #aaa;
+  border-bottom: none;
+  background-color: #ffffaaf0;
 }
 
 .project-title {
@@ -85,6 +91,10 @@ footer a {
 
 .lane {
   background-color: #eee;
+}
+.lane.over {
+  background-color: #fb96bb;
+  border: 2px splid pink;
 }
 
 .lane-title {
@@ -105,6 +115,13 @@ footer a {
   border-radius: 0.4rem;;
   cursor: pointer;
 }
+.task.over-top {
+  border-top: 2px solid blue;
+}
+.task.over-bottom {
+  border-bottom: 2px solid blue;
+}
+
 .task-title {
   margin: 0;
   font-size: large;
