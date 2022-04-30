@@ -16,6 +16,7 @@ function handleStartProjectEdit(ev: MouseEvent) {
 }
 
 function handleEndProjectEdit(ev: MouseEvent) {
+  ev.preventDefault()
   const projectId = (ev?.target as HTMLElement).closest<HTMLElement>('.project')
     ?.dataset.id!
   const input = document.querySelector<HTMLInputElement>(
@@ -32,7 +33,7 @@ export function Project(state: TaskboardState) {
     <div class="project-title ${isEditing ? 'editing' : ''}">
       ${isEditing
         ? html`<form>
-            <input type="text" value=${p.title} />
+            <input type="text" value=${p.title} autofocus />
             <button @click=${() => endProjectEdit(p.id, p.title)} type="button">
               X
             </button>

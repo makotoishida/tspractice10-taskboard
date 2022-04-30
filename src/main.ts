@@ -4,30 +4,40 @@ import './style.css'
 import type { TaskboardState } from './types'
 import { ProjectSelector, Project } from './project'
 import { initTaskboardStore } from './taskboardStore'
-import exampleData from './exampleData'
+import { load, save } from './storage'
 
 function App(state: TaskboardState) {
   return html`<div>${ProjectSelector(state)} ${Project(state)}</div>`
 }
 
-function renderApp(state: TaskboardState) {
+async function renderApp(state: TaskboardState) {
   const appRoot = document.querySelector<HTMLDivElement>('#app')!
   render(App(state), appRoot)
+
+  await save(state)
+  autoFocus()
 }
 
-initTaskboardStore(
-  {
-    projects: exampleData,
-    currentProject: exampleData[0],
-    editing: {
-      projectId: undefined,
-      laneId: undefined,
-      taskId: undefined,
-    },
-    dragdrop: {
-      dragOverElem: undefined,
-    },
-  },
-  renderApp
-)
+function autoFocus() {
+  const el = document.querySelector<HTMLElement>('[autofocus]')
+  if (!el) return
+  el.focus()
+}
 
+load().then((state) => {
+  initTaskboardStore(
+    {
+      ...state,
+      currentProject: state.projects[0],
+      editing: {
+        projectId: undefined,
+        laneId: undefined,
+        taskId: undefined,
+      },
+      dragdrop: {
+        dragOverElem: undefined,
+      },
+    },
+    renderApp
+  )
+})
