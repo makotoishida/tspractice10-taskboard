@@ -2,7 +2,7 @@ import { html, render } from 'lit-html'
 import 'normalize.css'
 import './style.css'
 import type { TaskboardState } from './types'
-import { ProjectSelector, Project } from './taskboard'
+import { ProjectSelector, Project } from './project'
 import { initTaskboardStore } from './taskboardStore'
 import exampleData from './exampleData'
 
@@ -19,6 +19,14 @@ initTaskboardStore(
   {
     projects: exampleData,
     currentProject: exampleData[0],
+    editing: {
+      projectId: undefined,
+      laneId: undefined,
+      taskId: undefined,
+    },
+    dragdrop: {
+      dragOverElem: undefined,
+    },
   },
   renderApp
 )

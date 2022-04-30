@@ -115,3 +115,33 @@ export function addProject() {
 
   onUpdate(state)
 }
+
+export function startProjectEdit(projectId: string) {
+  state = {
+    ...state,
+    editing: {
+      ...state.editing,
+      projectId,
+      laneId: undefined,
+      taskId: undefined,
+    },
+  }
+  onUpdate(state)
+}
+
+export function endProjectEdit(projectId: string, title: string) {
+  state = { ...state, editing: { ...state.editing, projectId: undefined } }
+
+  const project = state.projects.find((p) => p.id === projectId)
+  if (!project) return
+
+  project.title = title
+  onUpdate(state)
+}
+
+export function setDragOverElemRef(el?: HTMLElement) {
+  state.dragdrop.dragOverElem = el
+}
+export function getDragOverElemRef() {
+  return state.dragdrop.dragOverElem
+}

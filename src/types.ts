@@ -20,4 +20,12 @@ export type Project = {
 export type TaskboardState = {
   projects: Project[]
   currentProject: Project
+  editing: {
+    projectId?: string
+    laneId?: string
+    taskId?: string
+  }
+  dragdrop: {
+    dragOverElem?: HTMLElement
+  }
 }
