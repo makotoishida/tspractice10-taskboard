@@ -1,64 +1,75 @@
-import { TaskboardState } from './types'
-import { formatDateForStorage, getRandomID, parseDate } from './utils'
+import { TaskboardState, Project } from './types'
+import { getRandomID, parseDate } from './utils'
 
 const STORAGE_KEY = 'taskboard'
 
+type SavedState = {
+  currentProjectId?: string
+  projects?: Project[]
+}
+
 export async function save(state: TaskboardState) {
-  const s = JSON.stringify({
-    ...state,
+  const savedState: SavedState = {
     currentProjectId: state.currentProject.id,
-    projects: state.projects.map((p) => ({
-      ...p,
-      lanes: p.lanes.map((ln) => ({
-        ...ln,
-        tasks: ln.tasks.map((t) => ({
-          ...t,
-          dueDate: formatDateForStorage(t.dueDate),
-        })),
-      })),
-    })),
-  })
+    projects: state.projects,
+  }
+  const s = JSON.stringify(savedState)
   window.localStorage.setItem(STORAGE_KEY, s)
 }
 
 export async function load(): Promise<TaskboardState> {
   const s = window.localStorage.getItem(STORAGE_KEY) ?? '{}'
-  const tempState = JSON.parse(s) as any
-  const currentProjectId = tempState.currentProjectId
-
-  const state: TaskboardState = {
-    ...tempState,
-    projects:
-      tempState.projects?.map((p: any) => ({
-        ...p,
-        lanes:
-          p.lanes?.map((ln: any) => ({
-            ...ln,
-            tasks:
-              ln.tasks?.map((t: any) => ({
-                ...t,
-                dueDate: parseDate(t.dueDate as any),
-              })) ?? [],
-          })) ?? [],
-      })) ?? [],
-  }
+  const tempState = JSON.parse(s) as SavedState
+  let currentProjectId = tempState.currentProjectId
 
   // Create default initial project as an examle.
-  if (!state.projects.length) {
-    state.projects.push({
+  if (!tempState.projects) {
+    tempState.projects = []
+  }
+
+  if (!tempState.projects?.length) {
+    tempState.projects.push({
       id: getRandomID(),
       title: 'First Project',
       lanes: [
-        { id: getRandomID(), title: 'To Do', tasks: [] },
+        {
+          id: getRandomID(),
+          title: 'To Do',
+          tasks: [
+            { id: '1', title: 'test', description: '', dueDate: new Date() },
+          ],
+        },
         { id: getRandomID(), title: 'Doing', tasks: [] },
         { id: getRandomID(), title: 'Done', tasks: [] },
       ],
     })
+    currentProjectId = tempState.projects[0].id
   }
 
-  // Restore current project.
-  state.currentProject =
-    state.projects.find((p) => p.id === currentProjectId) ?? state.projects[0]
+  // Restore Date type from string.
+  tempState.projects = restoreDate(tempState.projects)
+
+  const state: TaskboardState = {
+    currentProject:
+      tempState.projects.find((p) => p.id === currentProjectId) ??
+      tempState.projects[0],
+    projects: tempState.projects,
+    editing: {},
+    dragdrop: {},
+  }
 
   return state
+}
+
+function restoreDate(projects: Project[]) {
+  return projects.map((p) => ({
+    ...p,
+    lanes: p.lanes.map((ln) => ({
+      ...ln,
+      tasks: ln.tasks.map((t) => ({
+        ...t,
+        dueDate: parseDate(t.dueDate as unknown as string),
+      })),
+    })),
+  }))
 }
