@@ -28,7 +28,6 @@ load().then((state) => {
   initTaskboardStore(
     {
       ...state,
-      currentProject: state.projects[0],
       editing: {
         projectId: undefined,
         laneId: undefined,

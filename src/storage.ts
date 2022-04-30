@@ -4,8 +4,10 @@ import { formatDateForStorage, getRandomID, parseDate } from './utils'
 const STORAGE_KEY = 'taskboard'
 
 export async function save(state: TaskboardState) {
-  const s = JSON.stringify(
-    state.projects.map((p) => ({
+  const s = JSON.stringify({
+    ...state,
+    currentProjectId: state.currentProject.id,
+    projects: state.projects.map((p) => ({
       ...p,
       lanes: p.lanes.map((ln) => ({
         ...ln,
@@ -14,32 +16,34 @@ export async function save(state: TaskboardState) {
           dueDate: formatDateForStorage(t.dueDate),
         })),
       })),
-    }))
-  )
+    })),
+  })
   window.localStorage.setItem(STORAGE_KEY, s)
 }
 
 export async function load(): Promise<TaskboardState> {
   const s = window.localStorage.getItem(STORAGE_KEY) ?? '{}'
-  const tempState = JSON.parse(s) as TaskboardState
-  const state = {
+  const tempState = JSON.parse(s) as any
+  const currentProjectId = tempState.currentProjectId
+
+  const state: TaskboardState = {
     ...tempState,
-    projects: tempState.projects?.map((p) => ({
-      ...p,
-      lanes: p.lanes?.map((ln) => ({
-        ...ln,
-        tasks: ln.tasks?.map((t) => ({
-          ...t,
-          dueDate: parseDate(t.dueDate as any),
-        })),
-      })),
-    })),
+    projects:
+      tempState.projects?.map((p: any) => ({
+        ...p,
+        lanes:
+          p.lanes?.map((ln: any) => ({
+            ...ln,
+            tasks:
+              ln.tasks?.map((t: any) => ({
+                ...t,
+                dueDate: parseDate(t.dueDate as any),
+              })) ?? [],
+          })) ?? [],
+      })) ?? [],
   }
 
-  if (!state.projects) {
-    state.projects = []
-  }
-
+  // Create default initial project as an examle.
   if (!state.projects.length) {
     state.projects.push({
       id: getRandomID(),
@@ -51,5 +55,10 @@ export async function load(): Promise<TaskboardState> {
       ],
     })
   }
+
+  // Restore current project.
+  state.currentProject =
+    state.projects.find((p) => p.id === currentProjectId) ?? state.projects[0]
+
   return state
 }
