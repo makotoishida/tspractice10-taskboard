@@ -1,6 +1,12 @@
 import { html } from 'lit-html'
 import type { TaskboardState, Project, Lane, Task } from './types'
-import { setCurrentProject, moveTask } from './taskboardStore'
+import {
+  setCurrentProject,
+  moveTask,
+  addTask,
+  addLane,
+  addProject,
+} from './taskboardStore'
 import { formatDate } from './utils'
 
 function Task(task: Task) {
@@ -22,7 +28,10 @@ function Task(task: Task) {
 
 function Lane(lane: Lane) {
   return html`<div data-id="${lane.id}" class="lane">
-    <h4 class="lane-title">${lane.title}</h4>
+    <div class="lane-title">
+      <h4>${lane.title}</h4>
+      <button @click=${() => addTask(lane.id)}>+</button>
+    </div>
     <div
       class="tasks"
       @dragenter=${onLaneDragEnter}
@@ -38,7 +47,10 @@ function Lane(lane: Lane) {
 export function Project(state: TaskboardState) {
   const p = state.currentProject
   return html`<div data-id="${p.id}" class="project">
-    <h3 class="project-title">${p.title}</h3>
+    <div class="project-title">
+      <h3>${p.title}</h3>
+      <button @click=${() => addLane()}>+ Lane</button>
+    </div>
     <div class="lanes">${p.lanes.map((i) => Lane(i))}</div>
   </div> `
 }
@@ -55,6 +67,7 @@ export function ProjectSelector({ projects, currentProject }: TaskboardState) {
             ${i.title}
           </div>`
       )}
+      <button @click=${() => addProject()}>+ Project</button>
     </div>
   `
 }

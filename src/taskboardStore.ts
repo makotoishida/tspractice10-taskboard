@@ -1,4 +1,5 @@
 import type { TaskboardState, Project, Lane, Task } from './types'
+import { getRandomID } from './utils'
 
 let state: TaskboardState
 let onUpdate: (state: TaskboardState) => void
@@ -68,6 +69,49 @@ export function moveTask(
   } else {
     toLane.tasks.push(task)
   }
+
+  onUpdate(state)
+}
+
+export function addTask(laneId: string) {
+  state = { ...state }
+  const { currentProject } = state
+  const toLane = currentProject.lanes.find((i) => i.id === laneId)
+  if (!toLane) return
+
+  const newTask: Task = {
+    id: getRandomID(),
+    title: 'New task',
+    description: '',
+  }
+  toLane.tasks.push(newTask)
+
+  onUpdate(state)
+}
+
+export function addLane() {
+  state = { ...state }
+  const { currentProject } = state
+
+  const newLane: Lane = {
+    id: getRandomID(),
+    title: 'New Lane',
+    tasks: [],
+  }
+  currentProject.lanes.push(newLane)
+
+  onUpdate(state)
+}
+
+export function addProject() {
+  state = { ...state }
+
+  const newProj: Project = {
+    id: getRandomID(),
+    title: 'New Project',
+    lanes: [],
+  }
+  state.projects.push(newProj)
 
   onUpdate(state)
 }

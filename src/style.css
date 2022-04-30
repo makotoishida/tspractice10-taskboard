@@ -75,10 +75,29 @@ footer a {
   background-color: #ffffaaf0;
 }
 
+.project-selector button {
+  width: 7rem;
+  margin: 0.4rem auto;
+  font-size: 80%;
+  border: 1px solid #a0a0a0a0;
+  cursor: pointer;
+}
+
 .project-title {
+  display: grid;
+  grid-template-columns: 1fr auto;
   margin: 1.2rem 0 0.4rem;
   color: #44f;
   font-weight: bold;
+}
+.project-title h3 {
+  margin: 0;
+}
+.project-title button {
+  padding: 0.2rem 0.4rem;
+  font-size: 70%;
+  border: 1px solid #a0a0a0a0;
+  cursor: pointer;
 }
 
 .lanes {
@@ -97,8 +116,18 @@ footer a {
 }
 
 .lane-title {
-  margin: 0.2rem;
+  display: grid;
+  padding: 0.4rem;
+  grid-template-columns: 1fr auto;
   background-color: #fefefe;
+}
+.lane-title h4 {
+  margin: 0rem;
+}
+.lane-title button {
+  margin: 0;
+  padding: 0.2rem 0.4rem;
+  cursor: pointer;
 }
 
 .tasks {
