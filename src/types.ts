@@ -19,7 +19,7 @@ export type Project = {
 
 export type TaskboardState = {
   projects: Project[]
-  currentProject: Project
+  currentProjectId: string
   editing: {
     projectId?: string
     laneId?: string

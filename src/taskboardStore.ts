@@ -15,10 +15,14 @@ export function initTaskboardStore(
   return { state }
 }
 
-export function setCurrentProject(project: Project) {
-  if (project === state.currentProject) return
-  state = { ...state, currentProject: project }
+export function setCurrentProject(projectId: string) {
+  if (projectId === state.currentProjectId) return
+  state = { ...state, currentProjectId: projectId }
   onUpdate(state)
+}
+
+export function getCurrentProject(state: TaskboardState) {
+  return state.projects.find((p) => p.id === state.currentProjectId)
 }
 
 function getTask(project: Project, taskId: string) {
@@ -42,9 +46,12 @@ export function moveTask(
   beforeTaskId?: string
 ) {
   state = { ...state }
-  const { currentProject } = state
+  const currentProject = getCurrentProject(state)
+  if (!currentProject) return
+
   const { lane, task, taskIndex } = getTask(currentProject, taskId)
   if (!lane || !task) return
+
   const toLane = currentProject.lanes.find((i) => i.id === toLaneId)
   if (!toLane) return
 
@@ -75,7 +82,9 @@ export function moveTask(
 
 export function addTask(laneId: string) {
   state = { ...state }
-  const { currentProject } = state
+  const currentProject = getCurrentProject(state)
+  if (!currentProject) return
+
   const toLane = currentProject.lanes.find((i) => i.id === laneId)
   if (!toLane) return
 
@@ -91,7 +100,8 @@ export function addTask(laneId: string) {
 
 export function addLane() {
   state = { ...state }
-  const { currentProject } = state
+  const currentProject = getCurrentProject(state)
+  if (!currentProject) return
 
   const newLane: Lane = {
     id: getRandomID(),

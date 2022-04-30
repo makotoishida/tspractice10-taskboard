@@ -26,34 +26,44 @@ function handleEndProjectEdit(ev: MouseEvent) {
 }
 
 export function Project(state: TaskboardState) {
-  const p = state.currentProject
-  const isEditing = p.id === state.editing?.projectId
+  const proj = state.projects.find((p) => p.id === state.currentProjectId)
+  if (!proj) {
+    return html`<div>Select a project</div>`
+  }
 
-  return html`<div data-id="${p.id}" class="project">
+  const isEditing = proj.id === state.editing?.projectId
+
+  return html`<div data-id="${proj.id}" class="project">
     <div class="project-title ${isEditing ? 'editing' : ''}">
       ${isEditing
         ? html`<form>
-            <input type="text" value=${p.title} autofocus />
-            <button @click=${() => endProjectEdit(p.id, p.title)} type="button">
+            <input type="text" value=${proj.title} autofocus />
+            <button
+              @click=${() => endProjectEdit(proj.id, proj.title)}
+              type="button"
+            >
               X
             </button>
             <button @click=${handleEndProjectEdit} type="submit">OK</button>
           </form>`
-        : html`<h3 @click=${handleStartProjectEdit}>${p.title}</h3>
+        : html`<h3 @click=${handleStartProjectEdit}>${proj.title}</h3>
             <button @click=${() => addLane()}>+ Lane</button>`}
     </div>
-    <div class="lanes">${p.lanes.map((i) => Lane(i))}</div>
+    <div class="lanes">${proj.lanes.map((i) => Lane(i))}</div>
   </div> `
 }
 
-export function ProjectSelector({ projects, currentProject }: TaskboardState) {
+export function ProjectSelector({
+  projects,
+  currentProjectId,
+}: TaskboardState) {
   return html`
     <div class="project-selector">
       ${projects.map(
         (i) =>
           html`<div
-            class="project ${i === currentProject ? 'active' : ''}"
-            @click=${() => setCurrentProject(i)}
+            class="project ${i.id === currentProjectId ? 'active' : ''}"
+            @click=${() => setCurrentProject(i.id)}
           >
             ${i.title}
           </div>`

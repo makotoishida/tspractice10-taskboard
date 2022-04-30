@@ -10,7 +10,7 @@ type SavedState = {
 
 export async function save(state: TaskboardState) {
   const savedState: SavedState = {
-    currentProjectId: state.currentProject.id,
+    currentProjectId: state.currentProjectId,
     projects: state.projects,
   }
   const s = JSON.stringify(savedState)
@@ -50,9 +50,7 @@ export async function load(): Promise<TaskboardState> {
   tempState.projects = restoreDate(tempState.projects)
 
   const state: TaskboardState = {
-    currentProject:
-      tempState.projects.find((p) => p.id === currentProjectId) ??
-      tempState.projects[0],
+    currentProjectId: currentProjectId ?? tempState.projects[0].id,
     projects: tempState.projects,
     editing: {},
     dragdrop: {},
