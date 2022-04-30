@@ -1,10 +1,6 @@
 import { html } from 'lit-html'
 import type { Task } from './types'
-import {
-  moveTask,
-  setDragOverElemRef,
-  getDragOverElemRef,
-} from './taskboardStore'
+import { moveTask, setDragOverElemRef } from './taskboardStore'
 import { formatDate } from './utils'
 
 export function Task(task: Task) {
