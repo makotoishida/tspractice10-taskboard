@@ -1,5 +1,5 @@
 import { html } from 'lit-html'
-import type { Lane } from './types'
+import type { Lane, TaskboardState } from './types'
 import {
   moveTask,
   addTask,
@@ -24,7 +24,9 @@ function handleEndLaneEdit(ev: MouseEvent) {
   endLaneEdit(laneId, input.value)
 }
 
-export function Lane(lane: Lane, isEditing: boolean) {
+export function Lane(lane: Lane, state: TaskboardState) {
+  const isEditing = lane.id === state.editing?.laneId
+
   return html`<div data-id="${lane.id}" class="lane">
     <div class="lane-title ${isEditing ? 'editing' : ''}">
       ${isEditing
@@ -48,7 +50,7 @@ export function Lane(lane: Lane, isEditing: boolean) {
       @dragleave=${(ev: DragEvent) => onLaneDragOverLeave(ev, false)}
       @drop=${(ev: DragEvent) => onLaneDrop(ev)}
     >
-      ${lane.tasks.map((i) => Task(i))}
+      ${lane.tasks.map((t) => Task(t, state))}
     </div>
   </div>`
 }

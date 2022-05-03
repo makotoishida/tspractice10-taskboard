@@ -7,6 +7,11 @@ export function formatDate(d?: Date): string {
   return `${d.getMonth() + 1}/${d.getDate()}/${twoDig(d.getFullYear())}`
 }
 
+export function formatDateForInput(d?: Date) {
+  if (!d) return ''
+  return `${d.getFullYear()}-${twoDig(d.getMonth() + 1)}-${twoDig(d.getDate())}`
+}
+
 export function formatDateForStorage(d?: Date) {
   if (!d) return ''
   return `${d.getFullYear()}-${twoDig(d.getMonth() + 1)}-${twoDig(

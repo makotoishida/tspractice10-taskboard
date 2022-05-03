@@ -184,6 +184,19 @@ footer a {
   font-size: large;
   font-weight: normal;
 }
+.task.editing form {
+  display: grid;
+}
+.task.editing form input {
+  min-width: 4rem;
+}
+.task.editing form .buttons{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  padding: 0.4rem;
+}
+
 .task-description {
   font-size: medium;
 }

@@ -4,6 +4,8 @@ import { getRandomID } from './utils'
 let state: TaskboardState
 let onUpdate: (state: TaskboardState) => void
 
+const noEditing = { projectId: undefined, laneId: undefined, taskId: undefined }
+
 export function initTaskboardStore(
   initialState: TaskboardState,
   updateCallback: (state: TaskboardState) => void
@@ -15,9 +17,14 @@ export function initTaskboardStore(
   return { state }
 }
 
+export function stopEditing() {
+  state = { ...state, editing: { ...noEditing } }
+}
+
 export function setCurrentProject(projectId: string) {
   if (projectId === state.currentProjectId) return
   state = { ...state, currentProjectId: projectId }
+  stopEditing()
   onUpdate(state)
 }
 
@@ -46,7 +53,8 @@ export function moveTask(
   toLaneId: string,
   beforeTaskId?: string
 ) {
-  state = { ...state }
+  stopEditing()
+  console.log('moveTask', state.editing)
   const currentProject = getCurrentProject(state)
   if (!currentProject) return
 
@@ -78,11 +86,12 @@ export function moveTask(
     toLane.tasks.push(task)
   }
 
+  console.log('moveTask 2: ', state.editing)
   onUpdate(state)
 }
 
 export function addTask(laneId: string) {
-  state = { ...state }
+  stopEditing()
   const currentProject = getCurrentProject(state)
   if (!currentProject) return
 
@@ -100,7 +109,7 @@ export function addTask(laneId: string) {
 }
 
 export function addLane() {
-  state = { ...state }
+  stopEditing()
   const currentProject = getCurrentProject(state)
   if (!currentProject) return
 
@@ -115,7 +124,7 @@ export function addLane() {
 }
 
 export function addProject() {
-  state = { ...state }
+  stopEditing()
 
   const newProj: Project = {
     id: getRandomID(),
@@ -128,20 +137,13 @@ export function addProject() {
 }
 
 export function startProjectEdit(projectId: string) {
-  state = {
-    ...state,
-    editing: {
-      ...state.editing,
-      projectId,
-      laneId: undefined,
-      taskId: undefined,
-    },
-  }
+  stopEditing()
+  state.editing.projectId = projectId
   onUpdate(state)
 }
 
 export function endProjectEdit(projectId: string, title: string) {
-  state = { ...state, editing: { ...state.editing, projectId: undefined } }
+  stopEditing()
 
   const project = state.projects.find((p) => p.id === projectId)
   if (!project) return
@@ -151,20 +153,13 @@ export function endProjectEdit(projectId: string, title: string) {
 }
 
 export function startLaneEdit(laneId: string) {
-  state = {
-    ...state,
-    editing: {
-      ...state.editing,
-      projectId: undefined,
-      laneId,
-      taskId: undefined,
-    },
-  }
+  stopEditing()
+  state.editing.laneId = laneId
   onUpdate(state)
 }
 
 export function endLaneEdit(laneId: string, title: string) {
-  state = { ...state, editing: { ...state.editing, laneId: undefined } }
+  stopEditing()
 
   const proj = getCurrentProject(state)
   if (!proj) return
@@ -176,20 +171,18 @@ export function endLaneEdit(laneId: string, title: string) {
 }
 
 export function startTaskEdit(taskId: string) {
-  state = {
-    ...state,
-    editing: {
-      ...state.editing,
-      projectId: undefined,
-      laneId: undefined,
-      taskId,
-    },
-  }
+  stopEditing()
+  state.editing.taskId = taskId
   onUpdate(state)
 }
 
-export function endTaskEdit(taskId: string, title: string, dueDate?: Date) {
-  state = { ...state, editing: { ...state.editing, taskId: undefined } }
+export function endTaskEdit(
+  taskId: string,
+  title: string,
+  description: string,
+  dueDate?: Date
+) {
+  stopEditing()
 
   const proj = getCurrentProject(state)
   if (!proj) return
@@ -197,6 +190,7 @@ export function endTaskEdit(taskId: string, title: string, dueDate?: Date) {
   if (!task) return
 
   task.title = title
+  task.description = description
   task.dueDate = dueDate
   onUpdate(state)
 }
