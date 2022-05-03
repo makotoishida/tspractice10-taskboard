@@ -136,6 +136,16 @@ export function addLane() {
   onUpdate(state)
 }
 
+export function deleteLane(laneId: string) {
+  stopEditing()
+  const currentProject = getCurrentProject(state)
+  if (!currentProject) return
+
+  currentProject.lanes = currentProject.lanes.filter((ln) => ln.id !== laneId)
+
+  onUpdate(state)
+}
+
 export function addProject() {
   stopEditing()
 
@@ -145,6 +155,15 @@ export function addProject() {
     lanes: [],
   }
   state.projects.push(newProj)
+
+  onUpdate(state)
+}
+
+export function deleteProject(projectId: string) {
+  stopEditing()
+  if (state.projects.length > 1) {
+    state.projects = state.projects.filter((p) => p.id !== projectId)
+  }
 
   onUpdate(state)
 }

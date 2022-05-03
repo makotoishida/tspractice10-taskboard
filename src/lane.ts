@@ -7,8 +7,11 @@ import {
   endLaneEdit,
   setDragOverElemRef,
   getDragOverElemRef,
+  deleteLane,
+  getCurrentProject,
 } from './taskboardStore'
 import { Task } from './task'
+import { deleteIcon } from './icon-delete'
 
 function handleStartLaneEdit(ev: MouseEvent) {
   const laneId = (ev?.target as HTMLElement).closest<HTMLElement>('.lane')
@@ -22,6 +25,11 @@ function handleEndLaneEdit(ev: MouseEvent) {
     ?.dataset.id!
   const input = document.querySelector<HTMLInputElement>('.lane-title input')!
   endLaneEdit(laneId, input.value)
+}
+
+function handleDeleteLane(laneId: string) {
+  if (!confirm('Are you sure to delete this lane?')) return
+  deleteLane(laneId)
 }
 
 export function Lane(lane: Lane, state: TaskboardState) {
@@ -39,6 +47,7 @@ export function Lane(lane: Lane, state: TaskboardState) {
               X
             </button>
             <button @click=${handleEndLaneEdit} type="submit">OK</button>
+            ${deleteIcon(() => handleDeleteLane(lane.id))}
           </form>`
         : html`<h4 @click=${handleStartLaneEdit}>${lane.title}</h4>
             <button @click=${() => addTask(lane.id)}>+</button>`}
