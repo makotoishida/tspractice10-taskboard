@@ -8,7 +8,6 @@ import {
   setDragOverElemRef,
   getDragOverElemRef,
   deleteLane,
-  getCurrentProject,
 } from './taskboardStore'
 import { Task } from './task'
 import { deleteIcon } from './icon-delete'
