@@ -54,7 +54,6 @@ export function moveTask(
   beforeTaskId?: string
 ) {
   stopEditing()
-  console.log('moveTask', state.editing)
   const currentProject = getCurrentProject(state)
   if (!currentProject) return
 
@@ -86,7 +85,6 @@ export function moveTask(
     toLane.tasks.push(task)
   }
 
-  console.log('moveTask 2: ', state.editing)
   onUpdate(state)
 }
 
@@ -104,6 +102,21 @@ export function addTask(laneId: string) {
     description: '',
   }
   toLane.tasks.push(newTask)
+
+  onUpdate(state)
+}
+
+export function deleteTask(taskId: string) {
+  stopEditing()
+  console.log('moveTask', state.editing)
+  const currentProject = getCurrentProject(state)
+  if (!currentProject) return
+
+  const { lane, task, taskIndex } = getTask(currentProject, taskId)
+  if (!lane || !task) return
+
+  // Remove from the current lane.
+  lane.tasks.splice(taskIndex, 1)
 
   onUpdate(state)
 }

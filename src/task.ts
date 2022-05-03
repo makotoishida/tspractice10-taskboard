@@ -2,12 +2,14 @@ import { html } from 'lit-html'
 import type { Task, TaskboardState } from './types'
 import {
   moveTask,
+  deleteTask,
   startTaskEdit,
   endTaskEdit,
   setDragOverElemRef,
   stopEditing,
 } from './taskboardStore'
 import { formatDate, formatDateForInput, parseDate } from './utils'
+import { deleteIcon } from './icon-delete'
 
 function handleStartTaskEdit(ev: MouseEvent) {
   const taskId = (ev?.target as HTMLElement).closest<HTMLElement>('.task')
@@ -32,6 +34,11 @@ function handleEndTaskEdit(ev: MouseEvent) {
     dueDateInput.value ? dueDateInput.value + ' 00:00:00' : ''
   )
   endTaskEdit(taskId, input.value, descriptionInput.value, dueDate)
+}
+
+function handleDeleteTask(taskId: string) {
+  if (!confirm('Are you sure to delete this task?')) return
+  deleteTask(taskId)
 }
 
 export function Task(task: Task, state: TaskboardState) {
@@ -66,6 +73,7 @@ export function Task(task: Task, state: TaskboardState) {
               X
             </button>
             <button @click=${handleEndTaskEdit} type="submit">OK</button>
+            ${deleteIcon(() => handleDeleteTask(task.id))}
           </div>
         </form>
       </div>`
