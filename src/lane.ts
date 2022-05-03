@@ -3,16 +3,43 @@ import type { Lane } from './types'
 import {
   moveTask,
   addTask,
+  startLaneEdit,
+  endLaneEdit,
   setDragOverElemRef,
   getDragOverElemRef,
 } from './taskboardStore'
 import { Task } from './task'
 
-export function Lane(lane: Lane) {
+function handleStartLaneEdit(ev: MouseEvent) {
+  const laneId = (ev?.target as HTMLElement).closest<HTMLElement>('.lane')
+    ?.dataset.id!
+  startLaneEdit(laneId)
+}
+
+function handleEndLaneEdit(ev: MouseEvent) {
+  ev.preventDefault()
+  const laneId = (ev?.target as HTMLElement).closest<HTMLElement>('.lane')
+    ?.dataset.id!
+  const input = document.querySelector<HTMLInputElement>('.lane-title input')!
+  endLaneEdit(laneId, input.value)
+}
+
+export function Lane(lane: Lane, isEditing: boolean) {
   return html`<div data-id="${lane.id}" class="lane">
-    <div class="lane-title">
-      <h4>${lane.title}</h4>
-      <button @click=${() => addTask(lane.id)}>+</button>
+    <div class="lane-title ${isEditing ? 'editing' : ''}">
+      ${isEditing
+        ? html`<form>
+            <input type="text" value=${lane.title} autofocus />
+            <button
+              @click=${() => endLaneEdit(lane.id, lane.title)}
+              type="button"
+            >
+              X
+            </button>
+            <button @click=${handleEndLaneEdit} type="submit">OK</button>
+          </form>`
+        : html`<h4 @click=${handleStartLaneEdit}>${lane.title}</h4>
+            <button @click=${() => addTask(lane.id)}>+</button>`}
     </div>
     <div
       class="tasks"

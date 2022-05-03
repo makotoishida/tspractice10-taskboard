@@ -22,6 +22,7 @@ export function setCurrentProject(projectId: string) {
 }
 
 export function getCurrentProject(state: TaskboardState) {
+  if (!state) return undefined
   return state.projects.find((p) => p.id === state.currentProjectId)
 }
 
@@ -146,6 +147,57 @@ export function endProjectEdit(projectId: string, title: string) {
   if (!project) return
 
   project.title = title
+  onUpdate(state)
+}
+
+export function startLaneEdit(laneId: string) {
+  state = {
+    ...state,
+    editing: {
+      ...state.editing,
+      projectId: undefined,
+      laneId,
+      taskId: undefined,
+    },
+  }
+  onUpdate(state)
+}
+
+export function endLaneEdit(laneId: string, title: string) {
+  state = { ...state, editing: { ...state.editing, laneId: undefined } }
+
+  const proj = getCurrentProject(state)
+  if (!proj) return
+  const lane = proj.lanes.find((ln) => ln.id === laneId)
+  if (!lane) return
+
+  lane.title = title
+  onUpdate(state)
+}
+
+export function startTaskEdit(taskId: string) {
+  state = {
+    ...state,
+    editing: {
+      ...state.editing,
+      projectId: undefined,
+      laneId: undefined,
+      taskId,
+    },
+  }
+  onUpdate(state)
+}
+
+export function endTaskEdit(taskId: string, title: string, dueDate?: Date) {
+  state = { ...state, editing: { ...state.editing, taskId: undefined } }
+
+  const proj = getCurrentProject(state)
+  if (!proj) return
+  const { task } = getTask(proj, taskId)
+  if (!task) return
+
+  task.title = title
+  task.dueDate = dueDate
   onUpdate(state)
 }
 

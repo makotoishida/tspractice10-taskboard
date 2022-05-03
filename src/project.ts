@@ -49,7 +49,9 @@ export function Project(state: TaskboardState) {
         : html`<h3 @click=${handleStartProjectEdit}>${proj.title}</h3>
             <button @click=${() => addLane()}>+ Lane</button>`}
     </div>
-    <div class="lanes">${proj.lanes.map((i) => Lane(i))}</div>
+    <div class="lanes">
+      ${proj.lanes.map((ln) => Lane(ln, ln.id === state.editing?.laneId))}
+    </div>
   </div> `
 }
 

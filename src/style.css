@@ -94,6 +94,9 @@ footer a {
   display: grid;
   grid-template-columns: 1fr auto auto ;
 }
+.project-title.editing form input {
+  min-width: 6rem;
+}
 .project-title h3 {
   margin: 0;
   cursor: pointer;
@@ -122,10 +125,24 @@ footer a {
 
 .lane-title {
   display: grid;
-  padding: 0.4rem;
   grid-template-columns: 1fr auto;
+  padding: 0.4rem;
   background-color: #fefefe;
 }
+.lane-title.editing form {
+  display: grid;
+  grid-template-columns: 1fr auto auto ;
+}
+.lane-title.editing form input {
+  min-width: 4rem;
+}
+.lane-title button {
+  padding: 0.2rem 0.4rem;
+  font-size: 70%;
+  border: 1px solid #a0a0a0a0;
+  cursor: pointer;
+}
+
 .lane-title h4 {
   margin: 0rem;
   cursor: pointer;
