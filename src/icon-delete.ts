@@ -1,12 +1,16 @@
 import { html, svg } from 'lit-html'
 
-export function deleteIcon(onClick: () => void, w: number = 24) {
+export function deleteIcon(
+  onClick: () => void,
+  w: number = 24,
+  color: string = 'red'
+) {
+  // SVG taken from https://heroicons.com/
   return html`<svg
     xmlns="http://www.w3.org/2000/svg"
-    class="h-6 w-6"
     fill="none"
     viewBox="0 0 24 24"
-    stroke="currentColor"
+    stroke=${color}
     stroke-width="2"
     width=${w}
     style="cursor:pointer;"
