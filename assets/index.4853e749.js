@@ -17,7 +17,7 @@ var ut=Object.defineProperty,pt=Object.defineProperties;var ft=Object.getOwnProp
       stroke-linejoin="round"
       d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
     />`}
-  </svg>`}function Ft(e){var n;const t=(n=(e==null?void 0:e.target).closest(".task"))==null?void 0:n.dataset.id;qt(t)}function Kt(e){var r;e.preventDefault();const t=(r=(e==null?void 0:e.target).closest(".task"))==null?void 0:r.dataset.id,n=document.querySelector(".task.editing form input.title"),s=document.querySelector(".task.editing form input.description"),i=document.querySelector(".task.editing form input.due-date"),o=st(i.value?i.value+" 00:00:00":"");lt(t,n.value,s.value,o)}function Wt(e){!confirm("Are you sure to delete this task?")||Pt(e)}function Yt(e,t){const n=e.id===t.editing.taskId;return h` ${n?h`<div data-id="${e.id}" class="task editing">
+  </svg>`}function Ft(e){var n;const t=(n=(e==null?void 0:e.target).closest(".task"))==null?void 0:n.dataset.id;qt(t)}function Kt(e){var d;e.preventDefault();const t=(d=(e==null?void 0:e.target).closest(".task"))==null?void 0:d.dataset.id,n=document.querySelector(".task.editing form input.title"),s=document.querySelector(".task.editing form input.description"),i=document.querySelector(".task.editing form input.due-date"),o=i.value?i.value+"T00:00:00":"",r=st(o);lt(t,n.value,s.value,r)}function Wt(e){!confirm("Are you sure to delete this task?")||Pt(e)}function Yt(e,t){const n=e.id===t.editing.taskId;return h` ${n?h`<div data-id="${e.id}" class="task editing">
         <form>
           <input type="text" class="title" value=${e.title} autofocus />
           <input
