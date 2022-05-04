@@ -30,9 +30,8 @@ function handleEndTaskEdit(ev: MouseEvent) {
   const dueDateInput = document.querySelector<HTMLInputElement>(
     '.task.editing form input.due-date'
   )!
-  const dueDate = parseDate(
-    dueDateInput.value ? dueDateInput.value + ' 00:00:00' : ''
-  )
+  const strDate = dueDateInput.value ? dueDateInput.value + 'T00:00:00' : ''
+  const dueDate = parseDate(strDate)
   endTaskEdit(taskId, input.value, descriptionInput.value, dueDate)
 }
 
